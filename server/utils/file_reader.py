@@ -13,7 +13,9 @@ def read_csv_summary(filename: str) -> str:
     """
     file_path = DATA_DIR / filename
     df = pd.read_csv(file_path)
-    return f"CSV file '{filename}' has {len(df)} rows and {len(df.columns)} columns."
+    #return f"CSV file '{filename}' has {len(df)} rows and {len(df.columns)} columns. More information {df.describe()} and as a whole is {df}"
+    return f"CSV file info is '{df.info()}' and as a whole is '{df}'"
+
 def read_parquet_summary(filename: str) -> str:
     """
     Read a Parquet file and return a simple summary.
