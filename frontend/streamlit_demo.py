@@ -58,7 +58,7 @@ if prompt := st.chat_input("What would you like to ask?"):
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
 
-            # Run your async function using the existing or new loop
+            # Run async function using the existing or new loop
             response = loop.run_until_complete(get_response_async(prompt))
 
         st.markdown(response)
