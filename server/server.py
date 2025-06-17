@@ -1,14 +1,8 @@
-# server.py
+from os import getenv
 from utils.mcp_instance import mcp
-import os
-from tools.csv_tools import summarize_csv_file 
-
-
-#ßFastMCP decorated tools (e.g., summarize_csv_file) will automatically be registered
+from tools.csv_tools import summarise_csv_file 
+from dotenv import load_dotenv
+load_dotenv()
 
 if __name__ == "__main__":
-    print(f"Starting FastMCP server.")
-    mcp.run()
-
-    # For dev/debugging with the MCP Inspector:
-    # mcp.dev()
+    mcp.run(transport="streamable-http")

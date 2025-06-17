@@ -1,2 +1,2 @@
 from mcp.server.fastmcp import FastMCP
-mcp = FastMCP("mix_server")
+mcp = FastMCP(name = "Demo MCP")

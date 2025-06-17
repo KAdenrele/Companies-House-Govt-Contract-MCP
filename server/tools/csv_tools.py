@@ -1,9 +1,10 @@
 from utils.mcp_instance import mcp
 from utils.file_reader import read_csv_summary
-@mcp.tool()
-def summarize_csv_file(filename: str) -> str:
+
+@mcp.tool(name="summarise_csv_file")
+def summarise_csv_file(filename: str) -> str:
     """
-    Summarize a CSV file by reporting its number of rows and columns.
+    Summarise a CSV file by reporting its number of rows and columns.
     Args:
         filename: Name of the CSV file in the /data directory (e.g., 'sample.csv')
     Returns:
