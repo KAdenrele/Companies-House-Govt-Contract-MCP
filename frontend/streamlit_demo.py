@@ -23,7 +23,7 @@ if "messages" not in st.session_state:
 # Initialize the Gemini chat session once and store it in the session state.
 if "chat_session" not in st.session_state:
     logger.info("Starting new Gemini chat session.")
-    st.session_state.chat_session = mygemini.model.start_chat()
+    st.session_state.chat_session = mygemini.create_gemini_model().start_chat()
 
 
 # --- Display Chat History ---
