@@ -57,7 +57,7 @@ async def all_docs_to_new_vector_store_async(docs_directory: Path) -> FAISS:
                 documents.append(doc)
 
     print(f"Processing {len(documents)} pages into a new knowledge base...")
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=300)
     chunks = text_splitter.split_documents(documents=documents)
     
     # Extract the text content from the Document chunks
