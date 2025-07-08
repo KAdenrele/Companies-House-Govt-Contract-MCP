@@ -1,12 +1,16 @@
 import httpx
 import asyncio
 import os
+from pathlib import Path
 import tomllib
 import logging
 from dotenv import load_dotenv
 load_dotenv()
 
-with open("config.toml", "rb") as f:
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+CONFIG_PATH = Path(__file__).resolve().parent.parent 
+with open(CONFIG_PATH/"config.toml", "rb") as f:
     config = tomllib.load(f)
 
 
@@ -19,24 +23,42 @@ class companies_house:
         self.competitors = config['competitors']
         self.auth = (self.api_key, "")
 
-    async def get_company_information_async(self, company_number:str, purpose:str, query_params:dict ={}):
+    async def get_company_information_async(self, company_number:str, purpose:str ="", query_params:dict ={}):
         """
         Asynchronously fetches company information from the Companies House API depending on the query parameter and purpose.
         """
-        if purpose == "profile":
-            url = f"{self.host_api}/company/{company_number}"
-        elif purpose == "officers":
-            url = f"{self.host_api}/company/{company_number}/{purpose}"
-        elif purpose == "persons-with-significant-control":
-            url = url = f"{self.host_api}/company/{company_number}/{purpose}"
-        elif purpose == "filing-history":
-            url = url = f"{self.host_api}/company/{company_number}/{purpose}"
-        else:
+        if purpose == "":
             #Just get profile from companies house if any issues.
-            url = f"{self.host_api}/company/{company_number}"
+            url = f"{self.host_api}/company/{company_number}"           
+        else:
+            url = f"{self.host_api}/company/{company_number}/{purpose}" 
+            
+            
         
         async with httpx.AsyncClient() as client:
             response = await client.get(url= url, auth=self.auth, params=query_params)
+            return response
+    
+    async def get_list_advanced_company_search(self, sic_codes: list[str], size: str = "10"):
+        """
+        Asynchronously searches for companies using a list of SIC codes.
+
+        Args:
+            sic_codes (List[str]): A list of SIC codes to search for (e.g., ["62010", "62020"]).
+            size (str, optional): The number of results to return. Defaults to "10".
+        """
+        url = f"{self.host_api}/advanced-search/companies" 
+        
+        formatted_sic_codes = ",".join(sic_codes)
+
+        query_params = {    
+            "sic_codes": formatted_sic_codes,
+            "size": size 
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url=url, auth=self.auth, params=query_params)
+
             return response
         
     
@@ -160,7 +182,3 @@ class companies_house:
             # General exception handler for other issues (e.g., network errors, parsing errors)
             logging.error(f"An unexpected error occurred for company {company_number}: {e}", exc_info=True)
             return None
-
-
-test = asyncio.run(companies_house().get_document_with_company_number_async(company_number="06440931"))
-

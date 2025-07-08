@@ -1,5 +1,7 @@
+import os
 import pandas as pd
-import pdfplumber
+import pytesseract
+from pdf2image import convert_from_bytes
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -29,18 +31,26 @@ def read_parquet_summary(filename: str) -> str:
     df = pd.read_parquet(file_path)
     return f"Parquet file '{filename}' has {len(df)} rows and {len(df.columns)} columns."
 
-def read_pdf(filename: str):
-    """
-    Read a pdf file and return specific values.
-    Using PDF Plumber. https://github.com/jsvine/pdfplumber/blob/stable/examples/notebooks/extract-table-nics.ipynb
-    Args:
-        filename: Name of the PDF file (e.g. 'sample.pdf')
-    Returns:
-        A string describing the file's contents.
-    """
-    file_path = DATA_DIR / filename
-    with pdfplumber.open(file_path) as pdf:
-        pdf.pages
-    
-    return file_path
+def read_pdf_to_text(DATA_DIR:Path, file)->dict:
+    custom_config = r'--psm 6'
+    document ={}
+    file = str(file)
+    document[file]={}
 
+    try:
+        with open(os.path.join(DATA_DIR, file), 'rb') as f:
+            pdf_file = convert_from_bytes(f.read())
+    except Exception as e:
+        print(f"Failed to read or convert {file} due to: {e}")
+        return document
+    
+
+    for (i,page) in enumerate(pdf_file) :
+        try:
+            page_data= pytesseract.image_to_string(image=page, 
+                                                    config=custom_config, 
+                                                    output_type= pytesseract.Output.DICT)
+            document[file][i] = page_data['text']
+        except Exception as e:
+            print(f"Failed page {i+1} in {file} due to: {e}")
+    return document

@@ -1,6 +1,9 @@
 [companies_house]
-api_host="https://api.company-information.service.gov.uk" # or "https://api.companieshouse.gov.uk/" # 
+api_host="https://api.company-information.service.gov.uk" 
 
 [[competitors]]
 name="Made Tech"
 company_number="06591591"
+
+[Zaizi]
+sic_code="62020"

@@ -11,10 +11,11 @@ def summarise_csv_file(filename: str) -> str:
         A string describing the file's dimensions.
     """
 
-     if filename is None:
+    if filename is None:
         return {
             "status": "user_guidance", 
-            "message": "The file name is unknown. You should prompt the user to provide a file name like 'sample.csv' to get the information needed."
-        }
+            "message": "The file name is unknown. Suggest the user uses'sample.csv' as an example."
+            }
+    
     return read_csv_summary(filename)
 
