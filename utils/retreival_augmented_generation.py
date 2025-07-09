@@ -112,8 +112,10 @@ class KnowledgeBaseTool():
             allow_dangerous_deserialization=True
         )
         
+
+        
         # Create a retriever
-        self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 3})
+        self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 5})
         print("Knowledge Base Tool initialized successfully.")
 
     def search(self, query: str) -> str:

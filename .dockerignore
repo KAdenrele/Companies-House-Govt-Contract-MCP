@@ -1,0 +1,29 @@
+# Git folder
+.git
+.gitignore
+
+# Docker specific files
+.dockerignore
+dockerfile
+
+# Python virtual environment
+.venv/
+
+# Python cache files and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and editor configuration
+.vscode/
+.idea/
+
+# Local environment variables 
+.env
+
+# Log files
+*.log
+
+# Test and documentation folders
+Notebooks/
