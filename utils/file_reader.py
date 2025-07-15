@@ -54,3 +54,4 @@ def read_pdf_to_text(DATA_DIR:Path, file)->dict:
         except Exception as e:
             print(f"Failed page {i+1} in {file} due to: {e}")
     return document
+
