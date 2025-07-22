@@ -43,7 +43,7 @@ def get_all_contracts(publishedFrom: Optional[str] = None,  publishedTo: Optiona
             
     return all_results
 
-def fetch_contracts_by_interval(start_date_str: str = "2025-05-01", day_interval: int = 4) -> List[Dict[str, Any]]:
+def fetch_contracts_by_interval(start_date_str: str = "2025-01-01", day_interval: int = 2) -> List[Dict[str, Any]]:
     """
     Fetches all awarded contracts from a start date, in chunks of a given day interval.
     
@@ -68,13 +68,10 @@ def fetch_contracts_by_interval(start_date_str: str = "2025-05-01", day_interval
         if interval_end_date > today:
             interval_end_date = today
 
-        #Format the *current* interval dates for the API call.
         start_str_for_api = current_interval_start.strftime("%Y-%m-%d")
         end_str_for_api = interval_end_date.strftime("%Y-%m-%d")
 
         print(f"--- Fetching contracts for interval: {start_str_for_api} to {end_str_for_api} ---")
-
-        # Call your function for the current interval's date range
         contracts_in_interval = get_all_contracts(publishedFrom=start_str_for_api, publishedTo=end_str_for_api, stage="awarded")
         
         if contracts_in_interval:
@@ -88,12 +85,14 @@ def fetch_contracts_by_interval(start_date_str: str = "2025-05-01", day_interval
         
         time.sleep(1)
 
-    print(f"✅ Finished! A total of {len(all_contracts)} contracts were fetched.")
+    print(f"Finished! A total of {len(all_contracts)} contracts were fetched.")
     return all_contracts
 
-all_contracts_since_jan = fetch_contracts_by_interval()
+#-------------- Generating file---------
+all_contracts_since_jan = fetch_contracts_by_interval(start_date_str = "2025-01-01", day_interval = 5)
 
 contracts_df = pd.DataFrame(all_contracts_since_jan)
+contracts_df.drop_duplicates(subset="ocid")
 
 contracts_df = contracts_df.explode('awards').reset_index(drop=True)
 contracts_df = contracts_df.explode('parties').reset_index(drop=True)
@@ -103,17 +102,16 @@ contracts_df['party_id'] = contracts_df['parties'].apply(lambda x: x.get('id') i
 contracts_df['party_name'] = contracts_df['parties'].apply(lambda x: x.get('name') if isinstance(x, dict) else None)
 contracts_df['buyer_id'] = contracts_df['buyer'].apply(lambda x: x.get('id') if isinstance(x, dict) else None)
 contracts_df['buyer_name'] = contracts_df['buyer'].apply(lambda x: x.get('name') if isinstance(x, dict) else None)
-#contracts_df = contracts_df.drop_duplicates()
-contracts_df.to_csv("./data/from_may_govt_contracts.csv")
-
 
 awards_df = pd.json_normalize(contracts_df['awards'])
 awards_df = awards_df.explode('suppliers').reset_index(drop=True)
 awards_df = awards_df.explode('documents').reset_index(drop=True)
-awards_df['supplier_id'] = awards_df['suppliers'].apply(lambda x : x.get('id') if isinstance(x, dict) else None )
-awards_df['supplier_name'] = awards_df['suppliers'].apply(lambda x : x.get('name') if isinstance(x, dict) else None )
-awards_df['document_id'] = awards_df['documents'].apply(lambda x : x.get('id') if isinstance(x, dict) else None )
-awards_df['document_type'] = awards_df['documents'].apply(lambda x : x.get('documentType') if isinstance(x, dict) else None )
-awards_df = awards_df.dropna(axis=0, subset=['id'])
-#awards_df = awards_df.drop_duplicates()
-awards_df.to_csv("./data/from_may_govt_awards.csv")
+awards_df.columns = ['awards_' + col for col in awards_df.columns]
+
+contracts_df = pd.concat([awards_df, contracts_df], axis = 1)
+contracts_df['awards_supplier_id'] = contracts_df['awards_suppliers'].apply(lambda x : x.get('id') if isinstance(x, dict) else None )
+contracts_df['awards_supplier_name'] = contracts_df['awards_suppliers'].apply(lambda x : x.get('name') if isinstance(x, dict) else None )
+contracts_df['awards_document_id'] = contracts_df['awards_documents'].apply(lambda x : x.get('id') if isinstance(x, dict) else None )
+contracts_df = contracts_df.drop(columns=["awards", "tender", "parties", "buyer", "awards_suppliers", "awards_documents"])
+
+contracts_df.to_csv("./data/from_jan_govt_contracts.csv")
