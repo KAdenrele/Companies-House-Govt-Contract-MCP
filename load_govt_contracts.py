@@ -89,10 +89,9 @@ def fetch_contracts_by_interval(start_date_str: str = "2025-01-01", day_interval
     return all_contracts
 
 #-------------- Generating file---------
-all_contracts_since_jan = fetch_contracts_by_interval(start_date_str = "2025-01-01", day_interval = 5)
+all_contracts_since_jan = fetch_contracts_by_interval(start_date_str = "2025-01-01", day_interval = 2)
 
 contracts_df = pd.DataFrame(all_contracts_since_jan)
-contracts_df.drop_duplicates(subset="ocid")
 
 contracts_df = contracts_df.explode('awards').reset_index(drop=True)
 contracts_df = contracts_df.explode('parties').reset_index(drop=True)
@@ -114,4 +113,32 @@ contracts_df['awards_supplier_name'] = contracts_df['awards_suppliers'].apply(la
 contracts_df['awards_document_id'] = contracts_df['awards_documents'].apply(lambda x : x.get('id') if isinstance(x, dict) else None )
 contracts_df = contracts_df.drop(columns=["awards", "tender", "parties", "buyer", "awards_suppliers", "awards_documents"])
 
+contracts_df["awards_value.amount"] = pd.to_numeric(contracts_df["awards_value.amount"], errors="raise")
+contracts_df["awards_date"] = pd.to_datetime(contracts_df["awards_date"], errors="raise", utc=True)
+contracts_df['awards_year'] = contracts_df["awards_date"].dt.year
+contracts_df['awards_month'] = contracts_df["awards_date"].dt.month
+contracts_df['awards_day'] = contracts_df["awards_date"].dt.day
+contracts_df["awards_contractPeriod.startDate"] = pd.to_datetime(contracts_df["awards_contractPeriod.startDate"], errors="raise", utc=True)
+contracts_df["awards_contractPeriod.endDate"] = pd.to_datetime(contracts_df["awards_contractPeriod.endDate"], errors="raise", utc=True)
+
+contracts_df["awards_date" ] = contracts_df["awards_date"].dt.strftime('%d-%m-%Y')
+contracts_df[ "awards_contractPeriod.startDate"] = contracts_df["awards_contractPeriod.startDate"].dt.strftime('%d-%m-%Y')
+contracts_df["awards_contractPeriod.endDate" ] = contracts_df["awards_contractPeriod.endDate" ].dt.strftime('%d-%m-%Y')
+
+old_column_names = contracts_df.columns
+new_column_names = [
+                    'Award ID','Award Status','Award Date','Data Award Published',
+                    'Award Value', 'Award Value Currency',	
+                    'Contracted Period Start Date',	'Contracted Period End Date',	
+                    'Award Description','OCID', 'Contract ID','Language', 'date', 'tag', 'Initiation Type','Title', 'Planning', 'Related Processes', 'Tender ID',
+                    'Tender Title','Party ID','Party Name', 'Buyer ID', 'Buyer Name', 'Supplier ID', 'Supplier Name',	'Award Document ID',
+                    "Award Year", "Award Month", "Award Day"
+                    ]
+
+column_name_mapper = dict(zip(old_column_names,new_column_names))
+contracts_df = contracts_df.rename(axis=1, mapper=column_name_mapper)
+
+contracts_df['tag'] = contracts_df['tag'].str.strip(to_strip="['").str.strip(to_strip="']")
+contracts_df = contracts_df[contracts_df['tag'] =='award']
+contracts_df['Zaizi'] = contracts_df['Supplier Name'].str.contains('Zaizi', case=False, na=False)
 contracts_df.to_csv("./data/from_jan_govt_contracts.csv")
