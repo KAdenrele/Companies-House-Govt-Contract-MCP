@@ -138,7 +138,10 @@ new_column_names = [
 column_name_mapper = dict(zip(old_column_names,new_column_names))
 contracts_df = contracts_df.rename(axis=1, mapper=column_name_mapper)
 
+contracts_df['tag'] = contracts_df['tag'].fillna('').astype(str)
 contracts_df['tag'] = contracts_df['tag'].str.strip(to_strip="['").str.strip(to_strip="']")
 contracts_df = contracts_df[contracts_df['tag'] =='award']
+
 contracts_df['Zaizi'] = contracts_df['Supplier Name'].str.contains('Zaizi', case=False, na=False)
+
 contracts_df.to_csv("./data/from_jan_govt_contracts.csv")
