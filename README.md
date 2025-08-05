@@ -1,4 +1,4 @@
-Competition Information MCP Server
+# Competition Information MCP Server
 Status: In Development
 
 1. Project Description
@@ -36,18 +36,18 @@ Follow these steps to set up the project locally.
 Step 1: Clone the Repository
 Bash
 
-git clone <your-repository-url>
-cd ModelContextProtocol-CompetitionInformation
+`git clone https://github.com/KAdenrele/Companies-House-Govt-Contract-MCP.git`
+`cd ModelContextProtocol-CompetitionInformation`
 Step 2: Create and Activate a Virtual Environment
 It is crucial to work within a Python virtual environment.
 
 Bash
 
 # Create the virtual environment
-python3 -m venv .venv
+`python3 -m venv .venv`
 
 # Activate it (on macOS/Linux)
-source .venv/bin/activate
+`source .venv/bin/activate`
 (On Windows, use the command .venv\Scripts\activate)
 
 Step 3: Install Dependencies
@@ -56,7 +56,8 @@ Install all the required Python packages from the requirements.txt file.
 Bash
 
 # Ensure your virtual environment is active
-pip install -r requirements.txt
+`pip install -r requirements.txt`
+
 5. Configuration
 The server requires environment variables for configuration, such as API keys or file paths.
 
@@ -69,7 +70,9 @@ cp .env.example .env
 Edit the .env file:
 Open the newly created .env file in a text editor and fill in the required values.
 
-6. Running the Server
+6. Run the "load_govt_contracts.py" script to generate the contracts csv file.
+
+7. Running the Server
 You can run the MCP server directly for local development or within a Docker container for a more isolated and portable deployment.
 
 Method 1: Running Locally
