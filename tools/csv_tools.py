@@ -1,5 +1,6 @@
 from utils.mcp_instance import mcp
-from utils.file_reader import read_csv_summary
+from utils.file_reader import read_csv_summary, ContractAnalyser
+import pandas as pd
 
 @mcp.tool(name="summarise_csv_file")
 def summarise_csv_file(filename: str) -> str:
@@ -18,4 +19,16 @@ def summarise_csv_file(filename: str) -> str:
             }
     
     return read_csv_summary(filename)
+
+@mcp.tool(name="Read_Govt_Awards_CSV")
+def Read_Govt_Awards_CSV():
+    """
+   
+    Loads and returns government contract awards as a list of records.
+        
+    """
+
+    awards = ContractAnalyser()
+    
+    return awards.contracts_df.to_dict(orient="records")
 
