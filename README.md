@@ -1,5 +1,4 @@
 Competition Information MCP Server
-Date: August 5, 2025
 Status: In Development
 
 1. Project Description
