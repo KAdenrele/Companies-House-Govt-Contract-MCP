@@ -86,22 +86,26 @@ Open the newly created .env file in a text editor and fill in the required value
 7. Running the Server
 You can run the MCP server directly for local development or within a Docker container for a more isolated and portable deployment.
 
-Method 1: Running Locally
+## Method 1: Running Locally
+
 This method is best for actively developing and testing your tools.
 
 Bash
 
-## Make sure your virtual environment is active
+### Make sure your virtual environment is active
 
 source .venv/bin/activate
 
-## Run the server
+### Run the server
 
 python3 server.py
+
 The server will start, and you should see a confirmation message from Uvicorn:
+
 INFO: Uvicorn running on http://0.0.0.0:50000 (Press CTRL+C to quit)
 
-Method 2: Using Docker (Recommended)
+## Method 2: Using Docker (Recommended)
+
 This is the recommended way to run the application to ensure a consistent environment.
 
 Build the Docker Image:
