@@ -48,8 +48,8 @@ def get_all_contracts(
             all_results.extend(releases_on_page)
             
 
-            # Get the 'links' dictionary, and then get the 'next' URL from inside it.
-            # This is the correct way to get the URL for the next page.
+            # Get the 'links' dictionary, and then get the 'next' URL from inside it. I have to use this because each API call only retrieves 100 results but there can be more.
+            #The additional results/releases above the 100max can be found using the next_url... keep finding them until all data is retrieved.
             next_url = data.get('links', {}).get('next')
             
             # The loop will automatically stop when 'next_url' becomes None.

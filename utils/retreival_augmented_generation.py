@@ -83,7 +83,7 @@ async def all_docs_to_new_vector_store_async(docs_directory: Path) -> FAISS:
     )
 
     print("Saving new knowledge base...")
-    # NOTE: save_local is a synchronous operation
+    # NOTE: save_local is synchronous
     vector_store.save_local("faiss_index")
     print("New knowledge base created and saved as 'faiss_index'")
 
@@ -102,7 +102,7 @@ class KnowledgeBaseTool():
             print("Loading PDFs into knowledge base for the first time. This may take a few minutes.")
             asyncio.run(all_docs_to_new_vector_store_async(docs_directory=DATA_DIR))
         
-        # Ensure you use the same embedding model as during indexing
+        # Ensure the same embedding model as during indexing 
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         
         # Load the vector store
